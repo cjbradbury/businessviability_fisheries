@@ -127,6 +127,15 @@ all_fleet_data <- bind_rows(
   fleet_data_long
 )
 
+all_fleet_data <- all_fleet_data |>
+  mutate(
+    value = if_else(
+      indicator == "Net Profit per vessel (£'000)" & year == 2025,
+      NA_real_,
+      value
+    )
+  )
+
 
 # Checks----
 
