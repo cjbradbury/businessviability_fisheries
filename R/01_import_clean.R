@@ -52,6 +52,48 @@ fleet_data <- map(
 
 names(overall) <- names(fleet_data$longliners)
 
+overall |>
+  distinct(indicator) |>
+  print(n = Inf)
+
+overall <- overall |>
+  mutate(
+    indicator = recode(
+      indicator,
+      "Number of active vessels" = "Number of vessels",
+      "Vessel Capacity Units (VCU)" = "VCU (unit)",
+      "Fishing income (£'M)" = "Fishing Income (£ million)",
+      "Days at sea" = "Days at Sea (days)",
+      "Fuel consumption ('000 litres)" = "Fuel Consumption (thousand litres)",
+      "Employment (FTE)" = "FTEs",
+      "Average Length (m)" = "Average length (m)",
+      "Average Power (kW)" = "Average power (kW)",
+      "Average Vessel Capacity Units (VCU)" = "Average VCU",
+      "Average Days at sea (days)" = "Average Days at Sea",
+      "Average Vessel age (years)" = "Average Vessel Age (year)",
+      "Average Landings per day at sea (tonnes)" = "Average landings per day at sea (tonnes)",
+      "Average Price per tonne landed (£)" = "Average price per tonne landed (£)",
+      "Landings by kW day at sea (kg)" = "Landings per kW day at sea (kg)",
+      "Fishing Income per kW day at sea (£)" = "Fishing income per kW day at sea (£)",
+      "Cost per kW day at sea (£)" = "Total cost per kW day at sea (£)",
+      "Fishing Income" = "Avg. Fishing Income (£'000)",
+      "Non-fishing income (£'000)" = "Avg. Non Fishing Income (£'000)",
+      "Income" = "Avg. Total Income (£'000)",
+      "Fuel costs" = "Avg. Fuel costs (£'000)",
+      "Crew share" = "Avg. Crew share (£'000)",
+      "Other fishing costs" = "Avg. Other Fishing Costs (£'000)",
+      "Total fishing costs (£'000)" = "Avg. Total Fishing Costs (£'000)",
+      "Total vessel costs" = "Avg. Total Vessel Costs (£'000)",
+      "Total costs (£'000)" = "Avg. Total Costs (£'000)",
+      "Gross value added (£'000)" = "Gross Value Added per vessel (£'000)",
+      "Operating profit per vessel (£'000)" = "Operating Profit per vessel (£'000)",
+      "Depreciation (£'000)" = "Depreciation per vessel (£'000)",
+      "Interest (£'000)" = "Interest per vessel (£'000)",
+      "Other finance costs (£'000)" = "Other Finance Costs per vessel (£'000)",
+      "Net profit (£'000)" = "Net Profit per vessel (£'000)"
+    )
+  )
+
 #convert to long format for easier analysis
 fleet_data_long <- imap_dfr(
   fleet_data,
