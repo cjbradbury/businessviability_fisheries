@@ -41,9 +41,6 @@ names(fleet_data) <- make_clean_names(names(fleet_data))
 #create a new column so that all data frames have the same number of columns
 fleet_data$ns_wo_s_demersal_u24m_u300k_w[["2025*"]] <- NA_real_ 
 
-fleet_data$overall <- overall
-rm(overall)
-
 #rename first column to indicators
 fleet_data <- map(
   fleet_data,
@@ -53,38 +50,71 @@ fleet_data <- map(
   }
 )
 
-#remove any leading or trailing space in the indicator names
-fleet_data <- map(
+names(overall) <- names(fleet_data$longliners)
+
+#convert to long format for easier analysis
+fleet_data_long <- imap_dfr(
   fleet_data,
-  ~ mutate(
-    .x,
-    indicator = trimws(indicator)
+    \(data, segment_name) {
+      data |>
+        mutate(fleet_segment = segment_name) |>
+        pivot_longer(
+          cols = matches("^\\d{4}"),
+          names_to = "year",
+          values_to = "value",
+        ) |>
+        mutate(
+          year = as.integer(str_remove(year, "\\*"))
+        )
+    }
   )
+
+overall_long <- overall |>
+  mutate(fleet_segment = "Overall") |>
+  pivot_longer(
+    cols = matches("\\d{4}"),
+    names_to = "year",
+    values_to = "value"
+  ) |>
+  mutate(
+    year = as.integer(str_remove(year, "\\*"))
+  )
+
+all_fleet_data <- bind_rows(
+  overall_long,
+  fleet_data_long
 )
-
-#make sure column names in overall are the same as the others
-names(fleet_data$overall) <- names(fleet_data$longliners)
-
 
 
 # Checks----
 
-#check column names
-names(fleet_data$longliners)
+overall_long |>
+  distinct(indicator)
 
-#check column names in all sheets are the same
-map(fleet_data, names)
+overall_long |>
+  group_by(indicator) |>
+  summarise(
+    first_year = min(year[!is.na(value)]),
+    latest_year = max(year[!is.na(value)]),
+    n_missing = sum(is.na(value))
+  ) |>
+  print(n=40)
 
-#check data
-glimpse(fleet_data$longliners)
+fleet_data_long |>
+  group_by(fleet_segment, indicator) |>
+  summarise(
+    first_year = min(year[!is.na(value)]),
+    latest_year = max(year[!is.na(value)]),
+    n_missing = sum(is.na(value)),
+    .groups = "drop"
+  )
 
-#check to see how many NA's there are
-map(fleet_data, ~ colSums(is.na(.x)))
+glimpse(all_fleet_data)
 
 # Save data ----
 
 saveRDS(
-  fleet_data,
-  "data/processed/fleet_data.rds"
+  all_fleet_data,
+  "data/processed/all_fleet_data.rds"
 )
 
