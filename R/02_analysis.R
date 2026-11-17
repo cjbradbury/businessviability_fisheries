@@ -3,7 +3,7 @@ rm(list = ls())
 
 library(tidyverse)
 
-all_fleet_data <- readRDS("data/processed/all_fleet_data.rds")
+all_fleet_data <- readRDS("../data/processed/all_fleet_data.rds")
 
 #explore indicators----
 
@@ -246,6 +246,6 @@ profitability_summary
 #    drawing conclusions about business viability.
 
 # Data note:
-# Valid net-prfoti estimates are not avialble for 2025 because depreciation,
+# Valid net-profit estimates are not available for 2025 because depreciation,
 # interest and other finance costs are unavailable. Net-profit analysis
 # therefore ends in 2024 for most fleet segments.
