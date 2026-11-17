@@ -3,7 +3,7 @@ rm(list = ls())
 
 library(tidyverse)
 
-all_fleet_data <- readRDS("../data/processed/all_fleet_data.rds")
+all_fleet_data <- readRDS(here::here("data/processed/all_fleet_data.rds"))
 
 #explore indicators----
 
@@ -13,18 +13,24 @@ all_fleet_data |>
 
 #group indicators based on type
 viability_indicators <- c(
-  "Avg. Fishing Income (£'000)",
-  "Avg. Total Income (£'000)",
-  "Avg. Total Costs (£'000)",
   "Operating Profit per vessel (£'000)",
   "Net Profit per vessel (£'000)",
   "Gross Value Added per vessel (£'000)"
 )
 
-drivers_indicators <- c(
+income_cost_indicators <- c(
+  "Avg. Fishing Income (£'000)",
+  "Avg. Non Fishing Income (£'000)",
+  "Avg. Total Income (£'000)",
   "Avg. Fuel costs (£'000)",
   "Avg. Crew share (£'000)",
   "Avg. Other Fishing Costs (£'000)",
+  "Avg. Total Fishing Costs (£'000)",
+  "Avg. Total Vessel Costs (£'000)",
+  "Avg. Total Costs (£'000)"
+)
+
+drivers_indicators <- c(
   "Average price per tonne landed (£)",
   "Average landings per day at sea (tonnes)",
   "Fishing income per kW day at sea (£)",
@@ -88,13 +94,6 @@ operating_profit_plot <- viability_data |>
     x = "Year",
     y = "Operating profit per vessel (£'000)"
   )
-#Notes:
-# - Large variation in operating profit between fleet segments.
-# - Overall trend masks considerable variation between segments.
-# - Low-activity >10m segment appears loss-making in multiple years.
-# - Some larger demersal segments have much higher but more volatile profits.
-# - Need to consider whether vessel size is driving differences in profit per vessel.
-# - Profitability does not necessarily mean resilience to displacement.
 
 #convert data into a tibble
 operating_profit_summary <- viability_data |>
@@ -115,19 +114,6 @@ operating_profit_summary <- viability_data |>
   arrange (latest_available_profit)
 
 operating_profit_summary
-#Notes:
-# - Operating profitability varies substantially across fleet segments.
-# - Low-activity >10m vessels recorded negative average operating profit
-#   in every observed year
-# - Low-activity <10m vessels operate close to break-even and recorded
-#   losses in 4 of 18 years
-# - Most other segments recorded no years of negative average operating
-#   profit over the time series
-# - Absolute profit levels differ substantially across segments, so higher
-#   operating profit should not automatically be interpreted as greater
-#   resilience to displacement.
-# - One segment has data only to 2021, therefore latest avaialable values
-#   are not directly comparable across all segments.
 
 #Net Profit per vessel (£'000)
 #all segments on one graph
@@ -163,14 +149,6 @@ net_profit_plot <- viability_data |>
     x = "Year",
     y = "Net profit per vessel (£'000)"
   )
-# Notes:
-# - Large variation in Net profit between fleet segments.
-# - Low-activity >10m is the weakest segment with net profit consistently
-#   below zero, and significant loss early in the series.
-# - Low-activity <10m is much closer to zero but still negative net profit
-# - Some segments with consistently positive operating profit move below
-#   zero on net profit
-# - Overall remains positive but that aggregate conceals the differences
 
 #convert data into a tibble
 net_profit_summary <- viability_data |>
@@ -191,12 +169,6 @@ net_profit_summary <- viability_data |>
   arrange (latest_available_profit)
 
 net_profit_summary
-# Notes:
-# - low activity, nephrops_over_300kw, nephrops_o250kw have persistent or
-#   frequent net losses.
-# - demersal u24m and longliners have had losses in the past but currently
-#   profitable.
-# - Overall and u10m demersal, u10m pots and traps, have had consistent profit
 
 #Combined profitability table
 profitability_summary <- operating_profit_summary |>
@@ -215,37 +187,88 @@ profitability_summary <- operating_profit_summary |>
         net_loss_pct = loss_year_pct
       )
   )
-
+#show table
 profitability_summary
 
-# Provisional profitability findings ----
+# Income and costs ----
+# Income and cost data subset
+income_cost_data <- all_fleet_data |>
+  filter(indicator %in% income_cost_indicators)
 
-# 1. Profitability varies substantially across fleet segments, both in
-#    absolute level and stability over time.
+# income vs costs
+income_cost_data |>
+  filter(
+    indicator %in% c(
+      "Avg. Total Income (£'000)",
+      "Avg. Total Costs (£'000)"
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value,
+    colour = indicator
+  )) +
+  geom_line() +
+  facet_wrap(~ fleet_segment, scales = "free_y") +
+  labs(
+    x = "Year",
+    y = "£'000 per vessel",
+    colour = NULL
+  )
 
-# 2. Low-activity >10m vessels show the clearest evidence of persistent
-#    financial pressure: average operating profit is negative throughout
-#    the observed period and net profit is negative in every year for
-#    which a valid net-profit estimate is available
+#operating profit margin to allow comparison of segments that have different scales
+operating_margin_data <- all_fleet_data |>
+  filter(
+    indicator %in% c(
+      "Operating Profit per vessel (£'000)",
+      "Avg. Total Income (£'000)"
+    )
+  ) |>
+  select(
+    fleet_segment,
+    year,
+    indicator,
+    value
+  ) |>
+  pivot_wider(
+    names_from = indicator,
+    values_from = value
+  ) |>
+  mutate(
+    operating_margin = 
+      `Operating Profit per vessel (£'000)` /
+      `Avg. Total Income (£'000)` * 100
+  )
+#Check code above has worked
+glimpse (operating_margin_data)
 
-# 3. Low-activity <10m vessels operate much closer to break-even and 
-#    experience frequent net losses, despite the relatively small
-#    absolute size of those losses.
+#graphs split by segment
+operating_margin_plot <- operating_margin_data |>
+  ggplot(aes(
+    x = year,
+    y = operating_margin
+  )) +
+  geom_line() +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed"
+  ) +
+  facet_wrap(~ fleet_segment, scales = "free_y") +
+  labs(
+    x = "Year",
+    y = "Operating profit margin (%)"
+  )
 
-# 4. Some segments with high current or recent profitability have also
-#    experienced substantial historical variation and periods of net 
-#    loss. Current profit alone therefore does not capture the stability
-#    of financial performance.
-
-# 5. The Overall series masks substantial differences between fleet
-#    segments and should therefore be treated primarily as a benchmark.
-
-# 6. These results describe historical profitability rather than directly
-#    measuring resilience to displacement or spatial squeeze. Profitability
-#    should be considered alongside costs, activity and productivity before
-#    drawing conclusions about business viability.
-
-# Data note:
-# Valid net-profit estimates are not available for 2025 because depreciation,
-# interest and other finance costs are unavailable. Net-profit analysis
-# therefore ends in 2024 for most fleet segments.
+#summary table
+operating_margin_summary <- operating_margin_data |>
+  group_by(fleet_segment) |>
+  summarise(
+    latest_year = max(year[!is.na(operating_margin)]),
+    latest_margin = operating_margin[year == max(year[!is.na(operating_margin)])] [1],
+    min_margin = min(operating_margin, na.rm = TRUE),
+    max_margin = max(operating_margin, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(latest_margin)
+#show table
+operating_margin_summary
