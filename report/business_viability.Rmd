@@ -13,10 +13,10 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(knitr)
 
-source("../R/02_analysis.R")
+source(here::here("R", "02_analysis.R"))
 
 ```
-#Profitability
+# Profitability
 
 Profitability provides an indication of the financial performance of different fleet segments over time. Operating profit is considered alongside net profit because the two measures capture different aspects of financial performance. Operating profit reflects the performance of fishing operation before depreciation, interest and financing costs, while net profit also includes these things.
 
@@ -44,9 +44,21 @@ profitability_summary |>
   )
 ```
 
+Table 1 highlights substantial differences in both the level and consistency of profitability across fleet segments. While most segments recorded positive operating profit in the latest available year, the frequency of historical losses varies considerably between segments. The differences are more pronounced for net profit, with several segments experiencing net losses in a meaningful proportion of observed years despite recording positive operating profits.
+
+This distinction is important because the latest available profit provides only a snapshot of financial performance. The proportion of years in which losses were recorded provides additional evidence on the persistence and stability of profitability over time. The results therefore suggest that assessments of business viability should consider both the current financial position and historical variability rather than relying on a single year's profitability.
+
+## Operating profit
+
 ```{r operating-profit-figure, fig.cap="Operating profit per vessel by fleet segment over time"}
 operating_profit_plot
 ```
+
+Figure 1 shows substantial variation in operating profit per vessel across fleet segments and over time. Some larger demersal segments generate operating profits considerably above the fleet average, while smaller-vessel segments generally generate much lower absolute profits per vessel. This partly reflects differences in the scale and characteristics of fishing businesses and means that absolute profit levels should be interpreted cautiously when comparing segments.
+
+Operating profitability also varies considerably over time for some fleet segments. Several segments experience pronounced increases and decreases in operating profit rather than a consistent trend, while others show comparatively stable performance. The Scotland-level series remains positive throughout the period and generally increases over the longer term, but this aggregate trend masks substantial differences between individual segments.
+
+## Net profit
 
 ```{r net-profit-plot, fig.cap="Net profit per vessel by fleet segment over time"}
 net_profit_plot
@@ -54,15 +66,34 @@ net_profit_plot
 
 **Data note:** Valid net profit estimates are not available for 2025 because depreciation, interest and other finance costs are not available for that year. Net profit analysis therefore ends in 2024 for most fleet segments. The latest available year also differs for some individual segments where data are unavailable.
 
+Figure 2 shows that the financial position of some fleet segments becomes weaker when depreciation, interest and other finance costs are taken into account. Periods of negative net profit occur more frequently than periods of negative operating profit, indicating that positive returns from fishing operations do not necessarily translate into positive overall financial returns once these additional costs are included.
+
+There is also considerable variation in net profit over time. Some segments move between positive and negative net profitability across the period, including segments that generate relatively high operating profits. This suggests that both the level and stability of profitability are relevant when considering financial viability. Persistent or recurring losses may indicate greater financial pressure, while consistently positive net profitability provides stronger evidence of sustained financial performance.
+
+## Operating profit margin
+
+Absolute operating profit differs substantially across fleet segments, in part reflecting differences in the scale and characteristics of fishing businesses. Operating profit margin provides an additional measure that accounts for these differences in scale by expressing operating profit per vessel as a proportion of average total income per vessel.
+
+```{r operating-margin-plot, fig.cap="Operating profit margin per vessel by fleet segment over time"}
+operating_margin_plot
+```
+
+Operating margins vary considerably across fleet segments and over time. The overall fleet operating margin increased over the period and was approximately 31% in 2025. Several smaller-vessel segments have relatively high operating margins despite generating substantially lower operating profit per vessel in real terms. For example, the under-10 metre hooks segment had a n operating margin of approximately 45% in 2025.
+
+Conversely, some larger demersal and nephrops segments generated substantially higher absolute operating profits but had lower operating margins. This shows that higher operating profit per vessel does not necessarily imply stronger profitability relative to the scale of the business.
+
 ## Findings
 
-Profitability varies substantially across fleet segments, both in level of profit generated and its stability over time. The overall Scotland-level results mask considerable differences between individual fleet segments.
+Profitability varies substantially across fleet segments, both in the level of profit generated and its stability over time. The overall Scotland-level results mask considerable differences between individual fleet segments.
 
-The low-activity over-10 metre segment shows the clearest evidence of persistent financial pressure. Average operating profit was negative throughout the observed period, while valid net profit estimates were negative in every year for which data were available. The low-activity under-10 metre segment operated much closer to break-even but also experienced frequent net losses.
+The profitability measures provide different perspectives on financial performance. Absolute operating profit shows the size of the financial surplus generated per vessel, while operating margin provides an indication of this surplus relative to income. Several smaller-vessel segments have relatively strong operating margins despite substantially lower absolute profits, demonstrating the importance of considering both measures.
 
-Financial pressure is not confined to the low-activity fleet. Some segments with positive profits in the latest available year experienced net losses relatively frequently over the historical period. This indicates that a single year's profitability does not fully represent the stability of financial performance within each segment.
+Some fleet segments with positive profits in the latest available year experienced net losses relatively frequently over the historical period. This indicates that a single year's profitability does not fully represent the stability of financial performance within each segment.
 
-Conversely, high absolute profitability should not automatically be interpreted as evidence of greater resilience. Some higher-profit fleet segments display substantial year-to-year variation and have experienced periods of negative net profitability.
+The low-activity fleet exhibits particularly weak or volatile profitability, although these categories are not the primary focus of this assessment.
 
-These findings provide evidence on historical financial performance rather than a direct measure of resilience to spatial displacement. Profitability therefore needs to be considered alongside income and costs, fishing activity and fleet characteristics before drawing wider conclusions about the capacity of different fleet segments to absorb additional spatial pressures.
+High absolute profitability should also not automatically be interpreted as evidence of greater resilience. Some higher-profit fleet segments display substantial year-to-year variation and have experienced periods of negative net profitability.
+
+These findings provide evidence on historical financial performance rather than a direct meausre of resilience to spatial displacement. Profitability therefore needs to be considered alongside income and costs, fishing activity, productivity and fleet characteristics before drawing wider conclusions about the capacity of different fleet segments to absorb additional spatial pressures.
+
 
