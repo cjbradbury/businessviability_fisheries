@@ -4,33 +4,65 @@ output: html_document
 date: "2026-11-16"
 ---
 
-source("R/02_analysis.R")
-
-##Profitability
-
-Here is the text
-
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE
+  )
+
+library(tidyverse)
+library(knitr)
+
+source("../R/02_analysis.R")
+
+```
+#Profitability
+
+Profitability provides an indication of the financial performance of different fleet segments over time. Operating profit is considered alongside net profit because the two measures capture different aspects of financial performance. Operating profit reflects the performance of fishing operation before depreciation, interest and financing costs, while net profit also includes these things.
+
+The analysis considers both the latest available profitability estimates and the frequency with which average vessels within each fleet segment have recorded losses over the available time series.
+
+```{r profitability-table}
+profitability_summary |>
+  mutate(
+    operating_profit = round(operating_profit, 1),
+    operating_loss_pct = round(operating_loss_pct, 1),
+    net_profit = round(net_profit, 1),
+    net_loss_pct = round(net_loss_pct, 1)
+  ) |>
+  rename(
+    "Fleet segment" = fleet_segment,
+    "Operating profit year" = operating_latest_year,
+    "Operating profit (£'000)" = operating_profit,
+    "Years with operating loss (%)" = operating_loss_pct,
+    "Net profit year" = net_latest_year,
+    "Net profit (£'000)" = net_profit,
+    "Years with net loss (%)" = net_loss_pct
+  ) |>
+  kable(
+    caption = "Profitability indicators by fleet segment"
+  )
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r operating-profit-figure, fig.cap="Operating profit per vessel by fleet segment over time"}
+operating_profit_plot
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r net-profit-plot, fig.cap="Net profit per vessel by fleet segment over time"}
+net_profit_plot
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+**Data note:** Valid net profit estimates are not available for 2025 because depreciation, interest and other finance costs are not available for that year. Net profit analysis therefore ends in 2024 for most fleet segments. The latest available year also differs for some individual segments where data are unavailable.
+
+## Findings
+
+Profitability varies substantially across fleet segments, both in level of profit generated and its stability over time. The overall Scotland-level results mask considerable differences between individual fleet segments.
+
+The low-activity over-10 metre segment shows the clearest evidence of persistent financial pressure. Average operating profit was negative throughout the observed period, while valid net profit estimates were negative in every year for which data were available. The low-activity under-10 metre segment operated much closer to break-even but also experienced frequent net losses.
+
+Financial pressure is not confined to the low-activity fleet. Some segments with positive profits in the latest available year experienced net losses relatively frequently over the historical period. This indicates that a single year's profitability does not fully represent the stability of financial performance within each segment.
+
+Conversely, high absolute profitability should not automatically be interpreted as evidence of greater resilience. Some higher-profit fleet segments display substantial year-to-year variation and have experienced periods of negative net profitability.
+
+These findings provide evidence on historical financial performance rather than a direct measure of resilience to spatial displacement. Profitability therefore needs to be considered alongside income and costs, fishing activity and fleet characteristics before drawing wider conclusions about the capacity of different fleet segments to absorb additional spatial pressures.
+
