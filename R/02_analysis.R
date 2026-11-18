@@ -54,6 +54,13 @@ income_cost_indicators <- c(
   "Avg. Total Costs (£'000)"
 )
 
+cost_components <- c(
+  "Avg. Fuel costs (£'000)",
+  "Avg. Crew share (£'000)",
+  "Avg. Other Fishing Costs (£'000)",
+  "Avg. Total Vessel Costs (£'000)"
+)
+
 drivers_indicators <- c(
   "Average price per tonne landed (£)",
   "Average landings per day at sea (tonnes)",
@@ -242,11 +249,18 @@ income_cost_data <- all_fleet_data |>
   filter(indicator %in% income_cost_indicators)
 
 # income vs costs
-income_cost_data |>
+income_cost_plot <- income_cost_data |>
   filter(
     indicator %in% c(
       "Avg. Total Income (£'000)",
       "Avg. Total Costs (£'000)"
+    )
+  ) |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
     )
   ) |>
   ggplot(aes(
@@ -255,7 +269,16 @@ income_cost_data |>
     colour = indicator
   )) +
   geom_line() +
-  facet_wrap(~ fleet_segment, scales = "free_y") +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    )
+    ) +
   labs(
     x = "Year",
     y = "£'000 per vessel",
@@ -330,3 +353,160 @@ operating_margin_summary <- operating_margin_data |>
            )
 #show table
 operating_margin_summary
+
+# Cost composition ----
+
+#focus on just the cost composition indicators
+cost_data <- income_cost_data |>
+  filter(indicator %in% cost_components)
+
+#see how costs have changed
+cost_data |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(
+    aes(
+      x = year,
+      y = value,
+      colour = indicator
+    )
+  ) +
+  geom_line() +
+  facet_wrap(
+    ~fleet_segment,
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    ) 
+    ) +
+      labs(
+        x = "Year",
+        y = "Average cost per vessel (£'000)",
+        colour = "Cost component"
+      )
+
+# cost shares of total cost
+cost_share_data <- income_cost_data |>
+  filter(
+    indicator %in% c(
+      "Avg. Fuel costs (£'000)",
+      "Avg. Crew share (£'000)",
+      "Avg. Other Fishing Costs (£'000)",
+      "Avg. Total Vessel Costs (£'000)",
+      "Avg. Total Costs (£'000)"
+    )
+  ) |>
+  pivot_wider(
+    names_from = indicator,
+    values_from = value
+  )
+
+#calculate each component as a percentage of total costs
+cost_share_data <- cost_share_data |>
+  mutate(
+    fuel_share =
+      `Avg. Fuel costs (£'000)` /
+      `Avg. Total Costs (£'000)` * 100,
+    crew_share =
+      `Avg. Crew share (£'000)` /
+      `Avg. Total Costs (£'000)` * 100,
+    other_fishing_share =
+      `Avg. Other Fishing Costs (£'000)` /
+      `Avg. Total Costs (£'000)` * 100,
+    vessel_share =
+      `Avg. Total Vessel Costs (£'000)` /
+      `Avg. Total Costs (£'000)` * 100,
+  )
+#check shares add to 100%
+cost_share_data <- cost_share_data |>
+  mutate(
+    total_share =
+      fuel_share +
+      crew_share +
+      other_fishing_share +
+      vessel_share
+  )
+summary(cost_share_data$total_share)
+
+cost_share_long <- cost_share_data |>
+  select(
+    fleet_segment,
+    year,
+    fuel_share,
+    crew_share,
+    other_fishing_share,
+    vessel_share
+  ) |>
+  pivot_longer(
+    cols = ends_with("_share"),
+    names_to = "cost_component",
+    values_to = "cost_share"
+  ) |>
+  mutate(
+    cost_component = recode(
+      cost_component,
+      "fuel_share" = "Fuel",
+      "crew_share" = "Crew",
+      "other_fishing_share" = "Other fishing",
+      "vessel_share" = "Vessel"
+    )
+  )
+
+cost_composition_plot <- cost_share_long |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(
+    aes(
+      x = year,
+      y = cost_share,
+      colour = cost_component
+    )
+  ) +
+  geom_line() +
+  facet_wrap(
+    ~ fleet_segment,
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    )
+  ) +
+  labs(
+    x = "Year",
+    y = "Share of total costs (%)",
+    colour = "Cost component"
+  )
+
+#2025 cost data
+cost_composition_summary <- cost_share_data |>
+  filter(!is.na(`Avg. Total Costs (£'000)`)) |>
+  group_by(fleet_segment) |>
+  slice_max(
+    year,
+    n = 1,
+    with_ties = FALSE
+    )|>
+  select(
+    fleet_segment,
+    year,
+    fuel_share,
+    crew_share,
+    other_fishing_share,
+    vessel_share
+  ) |>
+  arrange(desc(fleet_segment == "Overall"))
