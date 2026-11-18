@@ -108,6 +108,61 @@ The low-activity fleet exhibits particularly weak or volatile profitability, alt
 
 High absolute profitability should also not automatically be interpreted as evidence of greater resilience. Some higher-profit fleet segments display substantial year-to-year variation and have experienced periods of negative net profitability.
 
-These findings provide evidence on historical financial performance rather than a direct meausre of resilience to spatial displacement. Profitability therefore needs to be considered alongside income and costs, fishing activity, productivity and fleet characteristics before drawing wider conclusions about the capacity of different fleet segments to absorb additional spatial pressures.
+These findings provide evidence on historical financial performance rather than a direct measure of resilience to spatial displacement. Profitability therefore needs to be considered alongside income and costs, fishing activity, productivity and fleet characteristics before drawing wider conclusions about the capacity of different fleet segments to absorb additional spatial pressures.
 
+# Income and costs
 
+Income and costs provide additional context for the profitability results by showing how the financial position of different fleet segments has developed over time. All financial values are expressed in 2025 prices using the GDP deflator, meaning changes over time represent changes in real rather than nominal values.
+
+## Income and total costs
+
+```{r income-cost-plot, fig.cap="Figure 4: Total Income and total costs  per vessel by fleet segment over time"}
+income_cost_plot
+```
+
+Figure 4 shows substantial differeneces in the scale of income and costs across fleet segments. This reflects differences in vessel size, activity and business characteristics and means that absolute financial values should be interpreted cautiously when comparing segments.
+
+Across much of the fleet, average total income generally remains above average total costs, consistent with the predominantly positive operating profits identified in the profitability analysis. However, the gap between income and costs varies considerably across fleet segments and over time. Some segments also experience relatively large year-to-year movements in real income compared with costs, contributing to the variation in profitability observed over the period.
+
+The overall fleet position therefore masks substantial differences in the financial experience of individual fleet segments.
+
+## Cost composition
+
+The composition of total costs also vaires across the fleet. Table 2 presents each major cost component as a percentage of average total costs, allowing cost structures to be compared across fleet segments of substantially different sizes.
+
+```{r cost-composition-table}
+cost_composition_summary |>
+  mutate(
+    fleet_segment = recode(
+      fleet_segment,
+      !!!fleet_segment_labels
+    ),
+    fuel_share = round(fuel_share, 1),
+    crew_share = round(crew_share, 1),
+    other_fishing_share = round(other_fishing_share, 1),
+    vessel_share = round(vessel_share, 1)
+  ) |>
+  rename(
+    "Fleet segment" = fleet_segment,
+    "Latest year" = year,
+    "Fuel (%)" = fuel_share,
+    "Crew (%)" = crew_share,
+    "Other fishing (%)" = other_fishing_share,
+    "Vessel (%)" = vessel_share
+  ) |>
+  kable(
+    caption = "Table 2: Composition of average total costs by fleet segment, latest available year"
+  )
+```
+
+```{r cost-composition-figure, fig.cap="Figure 5: Composition of average total costs by fleet segment over time"}
+cost_composition_plot
+```
+
+Crew costs account for substantial proportion of total costs across much of the fleet. For the overall fleet, crew costs accounted for approximately 42% of average total costs in 2025, compared with approximately 25% for vessel costs, 20% for other fishing costs and 13% for fuel.
+
+However, this overall cost structure masks considerable difference between fleet segments. Fuel costs represent a relatively larger share of total costs for some demersal and nephrops segments, while fuel accounts for a much smaller proportion of costs for some passive-gear segments. Vessel costs are correspondingly more important for a number of these segments. Vessel costs are correspondingly more important for a number of these segments. Other fishing costs also represent a substantial share of total costs for several demersal segments.
+
+Figure 5 shows that cost structures are not fixed over time. The relative importance of fuel, crew, other fishing and vessel costs has changed within a number of fleet segments. This means that different segments may be exposed to different forms of cost pressure, and that exposure can itself change over time.
+
+Differences in cost composition may also be relevant when considering potential displacement pressures. For example, fleet segments for which fuel represents a larger proportion of costs could be more exposed to changes that increase steaming requirements. However, the cost data describe existing cost structures and do not in themselves demonstrate the effect of future spatial displacement.
