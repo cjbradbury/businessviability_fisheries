@@ -25,10 +25,24 @@ The analysis considers both the latest available profitability estimates and the
 ```{r profitability-table}
 profitability_summary |>
   mutate(
+    fleet_segment = recode(
+      fleet_segment,
+      !!!fleet_segment_labels
+    ),
     operating_profit = round(operating_profit, 1),
     operating_loss_pct = round(operating_loss_pct, 1),
     net_profit = round(net_profit, 1),
     net_loss_pct = round(net_loss_pct, 1)
+  ) |>
+  arrange(desc(fleet_segment == "Overall")) |>
+  select(
+    fleet_segment,
+    operating_latest_year,
+    operating_profit,
+    operating_loss_pct,
+    net_latest_year,
+    net_profit,
+    net_loss_pct
   ) |>
   rename(
     "Fleet segment" = fleet_segment,
@@ -40,7 +54,7 @@ profitability_summary |>
     "Years with net loss (%)" = net_loss_pct
   ) |>
   kable(
-    caption = "Profitability indicators by fleet segment"
+    caption = "Table 1: Profitability indicators by fleet segment"
   )
 ```
 
@@ -50,7 +64,7 @@ This distinction is important because the latest available profit provides only 
 
 ## Operating profit
 
-```{r operating-profit-figure, fig.cap="Operating profit per vessel by fleet segment over time"}
+```{r operating-profit-figure, fig.cap="Figure 1: Operating profit per vessel by fleet segment over time"}
 operating_profit_plot
 ```
 
@@ -60,7 +74,7 @@ Operating profitability also varies considerably over time for some fleet segmen
 
 ## Net profit
 
-```{r net-profit-plot, fig.cap="Net profit per vessel by fleet segment over time"}
+```{r net-profit-plot, fig.cap="Figure 2: Net profit per vessel by fleet segment over time"}
 net_profit_plot
 ```
 
@@ -74,7 +88,7 @@ There is also considerable variation in net profit over time. Some segments move
 
 Absolute operating profit differs substantially across fleet segments, in part reflecting differences in the scale and characteristics of fishing businesses. Operating profit margin provides an additional measure that accounts for these differences in scale by expressing operating profit per vessel as a proportion of average total income per vessel.
 
-```{r operating-margin-plot, fig.cap="Operating profit margin per vessel by fleet segment over time"}
+```{r operating-margin-plot, fig.cap="Figure 3: Operating profit margin per vessel by fleet segment over time"}
 operating_margin_plot
 ```
 
