@@ -3,13 +3,37 @@ rm(list = ls())
 
 library(tidyverse)
 
-all_fleet_data <- readRDS(here::here("data/processed/all_fleet_data.rds"))
+all_fleet_data <- readRDS(here::here("data", "processed", "all_fleet_data.rds"))
 
 #explore indicators----
 
 all_fleet_data |>
   distinct(indicator) |>
   print(n = Inf)
+
+#rename fleet segment labels for outputs
+fleet_segment_labels <- c(
+  "Overall" = "Overall",
+  "low_activity_o10m" = "Low activity, over 10m",
+  "low_activity_u10m" = "Low activity, under 10m",
+  "ns_nephrops_over_300k_w"= "North Sea nephrops, under 300kW",
+  "wo_s_nephrops_o250k_w" = "North Sea nephrops, over 250kW",
+  "ns_wo_s_demersal_u24m_o300k_w" = "NSWOS demersal, under 24m over 300kW",
+  "ns_wo_s_demersal_seiners" = "NSWOS demersal seiners",
+  "wo_s_nephrops_u250k_w" = "WOS nephrops, under 250kW",
+  "pots_traps_o12m" = "Pots and traps, over 12m",
+  "ns_wo_s_demersal_u24m_u300k_w" = "NSWOS demersal, under 24m under 300kW",
+  "ns_wo_s_demersal_over_24m" = "NSWOS demersal, over 24m",
+  "ns_wo_s_demersal_pair_trawl_seine" = "NSWOS demersal pair trawl seine",
+  "u10m_demersal_trawl" = "Demersal trawl, under 10m",
+  "ns_nephrops_under_300k_w" = "North Sea nephrops, under 300kW",
+  "dredge_o15m" = "Dredge, over 15m",
+  "pots_traps_10_12m" = "Pots and traps, 10-12m",
+  "u10m_pots_traps" = "Pots and traps, under 10m",
+  "longliners" = "Longliners",
+  "dredge_u15m" = "Dredge, under 15m",
+  "u10m_hooks" = "Hooks, under 10m"
+  )
 
 #group indicators based on type
 viability_indicators <- c(
@@ -80,6 +104,13 @@ viability_data |>
 #individual graph for each segment
 operating_profit_plot <- viability_data |>
   filter(indicator == "Operating Profit per vessel (£'000)") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
   ggplot(aes(
     x = year,
     y = value
@@ -89,7 +120,11 @@ operating_profit_plot <- viability_data |>
     yintercept = 0,
     linetype = "dashed"
   ) +
-  facet_wrap(~ fleet_segment, scales = "free_y") +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y", 
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
+    ) +
   labs(
     x = "Year",
     y = "Operating profit per vessel (£'000)"
@@ -134,7 +169,14 @@ viability_data |>
 
 #individual graph for each segment
 net_profit_plot <- viability_data |>
-  filter(indicator == "Net Profit per vessel (£'000)") |>
+  filter(indicator == "Net Profit per vessel (£'000)") |> 
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  )|>
   ggplot(aes(
     x = year,
     y = value
@@ -144,7 +186,11 @@ net_profit_plot <- viability_data |>
     yintercept = 0,
     linetype = "dashed"
   ) +
-  facet_wrap(~ fleet_segment, scales = "free_y") +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y", 
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
+  ) +
   labs(
     x = "Year",
     y = "Net profit per vessel (£'000)"
@@ -223,7 +269,7 @@ operating_margin_data <- all_fleet_data |>
       "Operating Profit per vessel (£'000)",
       "Avg. Total Income (£'000)"
     )
-  ) |>
+  ) |> 
   select(
     fleet_segment,
     year,
@@ -243,7 +289,14 @@ operating_margin_data <- all_fleet_data |>
 glimpse (operating_margin_data)
 
 #graphs split by segment
-operating_margin_plot <- operating_margin_data |>
+operating_margin_plot <- operating_margin_data |> 
+  mutate(
+  fleet_segment = fct_relevel(
+    fleet_segment,
+    "Overall",
+    after = 0
+  )
+  ) |>
   ggplot(aes(
     x = year,
     y = operating_margin
@@ -253,7 +306,10 @@ operating_margin_plot <- operating_margin_data |>
     yintercept = 0,
     linetype = "dashed"
   ) +
-  facet_wrap(~ fleet_segment, scales = "free_y") +
+  facet_wrap(~ fleet_segment, 
+             scales = "free_y",
+             labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
+             ) +
   labs(
     x = "Year",
     y = "Operating profit margin (%)"
@@ -269,6 +325,8 @@ operating_margin_summary <- operating_margin_data |>
     max_margin = max(operating_margin, na.rm = TRUE),
     .groups = "drop"
   ) |>
-  arrange(latest_margin)
+  arrange( desc(fleet_segment == "Overall"),
+           latest_margin
+           )
 #show table
 operating_margin_summary
