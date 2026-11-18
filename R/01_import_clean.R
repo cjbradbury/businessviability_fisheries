@@ -8,16 +8,17 @@ library (rmarkdown) #creating rmarkdown files
 library (tidyverse) #manipulating data
 library (readxl) #reading in excel files
 library (janitor) # clean
+library (here) #accessing files in different folders
 
 # Read in data and cleaning ----
 
 #Check relevant data sheets
-overall <- read_excel("data/raw/Scotland_Fleet_data.xlsx") |> 
+overall <- read_excel(here::here("data", "raw", "Scotland_Fleet_data.xlsx")) |> 
   clean_names()
 names(overall)[1] <- "indicator"
 
 
-file <- "data/raw/Scotland_Fleet_data_by_segment.xlsx"
+file <- here::here("data", "raw", "Scotland_Fleet_data_by_segment.xlsx")
 
 #Remove notes, and port sheet
 sheets <- excel_sheets(file)
@@ -166,6 +167,6 @@ glimpse(all_fleet_data)
 
 saveRDS(
   all_fleet_data,
-  "data/processed/all_fleet_data.rds"
-)
+  here::here("data", "processed", "all_fleet_data.rds")
+  )
 
