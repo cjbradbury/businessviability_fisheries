@@ -1,6 +1,8 @@
 ---
 title: "Business Viability of Commercial Fisheries"
-output: html_document
+output: 
+  html_document: 
+    keep_md: true
 date: "2026-11-16"
 ---
 
