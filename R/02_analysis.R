@@ -982,3 +982,46 @@ fte_plot <- structure_data |>
     axis.title = element_text(size = 10),
     panel.spacing = grid::unit(1, "lines")
   )
+
+structure_summary <- structure_data |>
+  filter(!is.na(value)) |>
+  group_by(fleet_segment, indicator) |>
+  summarise(
+    first_year = min(year),
+    latest_year = max(year),
+    first_value = value[year == first_year] [1],
+    latest_value = value[year == latest_year] [1],
+    .groups = "drop"
+  ) |>
+  mutate(
+    absolute_change = latest_value - first_value,
+    percentage_change = (latest_value - first_value) / first_value * 100
+  )
+
+structure_summary |>
+  print(n = Inf)
+
+overall_structure_summary <- structure_summary |>
+  filter(fleet_segment == "Overall") |>
+  mutate(
+    change = case_when(
+      indicator %in% c(
+        "Number of vessels",
+        "FTEs"
+      ) ~ paste0(
+        round(percentage_change,1),
+        "%"
+      ),
+      TRUE ~ as.character(
+        round(absolute_change, 1)
+      )
+    )
+  ) |>
+  select(
+    indicator,
+    first_year,
+    first_value,
+    latest_year,
+    latest_value,
+    change
+  )
