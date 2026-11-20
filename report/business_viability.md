@@ -200,3 +200,28 @@ Employment has also fallen substantially over the period, broadly supporting the
 Despite the reduction in vessel numbers and aggregate days at sea, total landings have not declined proportionately. This coincides with an increase in average landings per day at sea at the overall fleet level. Taken together, the evidence suggests that the fleet has become smaller and undertaken fewer aggregate fishing days while maintaining a comparatively high level of aggregate landings.
 
 This should not be interpreted as evidence that fleet contraction has itself caused greater productivity. Changes in fleet composition, vessel characteristics, target fisheries and the characteristics of vessels remaining active may all contribute to the observed relationship. Nevertheless, the results demonstrate that changes in the scale of the fleet are an important part of the context when assessing trends in fishing activity and business viability.
+
+# Fleet Structure
+
+Changes in fleet structure provide important context for the trends in activity, productivity and financial performance identified above. Table 3 below summarises changes in selected characteristics of the overall fleet between 2008 and 2025.
+
+**Table 3: Change in overall fleet structure, 2008-2025**
+
+
+|Indicator                     |   2008|   2025|Change |
+|:-----------------------------|------:|------:|:------|
+|Average vessel capacity (VCU) |  169.2|  169.3|0.1    |
+|Average vessel age (years)    |   22.0|   27.6|5.6    |
+|Average length (m)            |   12.3|   11.5|-0.8   |
+|Employment (FTE)              | 4772.0| 3023.9|-36.6% |
+|Number of vessels             | 1843.0| 1520.0|-17.5% |
+
+Changes in fleet structure provide important context for the trends in activity, productivity and financial performance identified above. Table 3 summarises changes in selected characteristics of the overall fleet between 2008 and 2025.
+
+The overall number of vessels declined from 1,843 in 2008 to 1,520 in 2025, a reduction of approximately 18%. Employment declined more substantially, from around 4,772 FTEs to 3,042 FTEs, representing a reduction of approximately 37%. These changes reinforce the evidence from total days at sea of a longer-term contraction in the overall scale of the fleet.
+
+Changes in average vessel characteristics are less pronounced. Average vessel length declined from 12.3 metres to 11.5 metres, while average vessel capacity, measured using Vessel Capacity Units, remained broadly unchanged at around 169. The contraction in vessel numbers has therefore not been accompanied by a comparable reduction in the average capacity  measure of vessels remaining in the fleet.
+
+The fleet has also aged over the period. Average vessel age increased from approximately 22 years in 2008 to 28 years in 2025. This may be relevant to longer-term business viability, including investment and vessel replacement considerations, although vessel age alone does not indicate the condition or economic viability of individual vessels.
+
+The overall figures also mask considerable changes in the composition of the fleet. Vessel numbers and employment have declined substantially within several individual fleet segments, while a smaller number of segments have expanded. Changes in aggregate measures of fishing activity and productivity should therefore be interpreted partly in the context of this changing fleet composition rather than solely in the behaviour or performance of otherwise unchanged businesses.
