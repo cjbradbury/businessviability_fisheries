@@ -109,7 +109,9 @@ viability_data |>
 
 #individual graph for each segment
 operating_profit_plot <- viability_data |>
-  filter(indicator == "Operating Profit per vessel (£'000)") |>
+  filter(
+    indicator == "Operating Profit per vessel (£'000)"
+  ) |>
   mutate(
     fleet_segment = fct_relevel(
       fleet_segment,
@@ -121,19 +123,40 @@ operating_profit_plot <- viability_data |>
     x = year,
     y = value
   )) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   geom_hline(
     yintercept = 0,
-    linetype = "dashed"
+    linetype = "dashed",
+    colour = "grey50",
+    linewidth = 0.4
   ) +
   facet_wrap(
-    ~ fleet_segment, 
-    scales = "free_y", 
-    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
-    ) +
+    ~ fleet_segment,
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 18)
+      )
+    )
+  ) +
   labs(
     x = "Year",
     y = "Operating profit per vessel (£'000)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #convert data into a tibble
@@ -187,19 +210,35 @@ net_profit_plot <- viability_data |>
     x = year,
     y = value
   )) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   geom_hline(
     yintercept = 0,
-    linetype = "dashed"
+    linetype = "dashed",
+    colour = "grey50",
+    linewidth = 0.4
   ) +
   facet_wrap(
     ~ fleet_segment, 
-    scales = "free_y", 
-    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
   ) +
   labs(
     x = "Year",
     y = "Net profit per vessel (£'000)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #convert data into a tibble
@@ -267,21 +306,36 @@ income_cost_plot <- income_cost_data |>
     y = value,
     colour = indicator
   )) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    colour = "grey50",
+    linewidth = 0.4
+  ) +
   facet_wrap(
     ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    )
-    ) +
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
   labs(
     x = "Year",
     y = "£'000 per vessel",
     colour = NULL
+  )+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #operating profit margin to allow comparison of segments that have different scales
@@ -322,19 +376,36 @@ operating_margin_plot <- operating_margin_data |>
   ggplot(aes(
     x = year,
     y = operating_margin
-  )) +
-  geom_line() +
+  ))+
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   geom_hline(
     yintercept = 0,
-    linetype = "dashed"
+    linetype = "dashed",
+    colour = "grey50",
+    linewidth = 0.4
   ) +
-  facet_wrap(~ fleet_segment, 
-             scales = "free_y",
-             labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 20)))
-             ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
   labs(
     x = "Year",
     y = "Operating profit margin (%)"
+  )+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #summary table
@@ -375,22 +446,31 @@ cost_data |>
       colour = indicator
     )
   ) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   facet_wrap(
-    ~fleet_segment,
+    ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    ) 
-    ) +
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
       labs(
         x = "Year",
         y = "Average cost per vessel (£'000)",
         colour = "Cost component"
-      )
+      ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
+  )
 
 # cost shares of total cost
 cost_share_data <- income_cost_data |>
@@ -474,21 +554,30 @@ cost_composition_plot <- cost_share_long |>
       colour = cost_component
     )
   ) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   facet_wrap(
-    ~ fleet_segment,
+    ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    )
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
   ) +
   labs(
     x = "Year",
     y = "Share of total costs (%)",
     colour = "Cost component"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #2025 cost data
@@ -532,20 +621,29 @@ landings_per_day_plot <- drivers_data |>
     x = year,
     y = value
   )) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   facet_wrap(
-    ~ fleet_segment,
+    ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    )
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
   ) +
   labs(
     x = "Year",
     y = "Average landings per day at sea (tonnes)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 #real price received
@@ -564,20 +662,29 @@ price_plot <- drivers_data |>
     x = year,
     y = value
   )) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   facet_wrap(
-    ~ fleet_segment,
+    ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    )
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
   ) +
   labs(
     x = "Year",
     y = "Average price per tonne landed (£)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 
 # Notes:
@@ -622,25 +729,36 @@ kw_day_plot <- kw_day_data |>
     colour = indicator
     )
   ) +
-  geom_line() +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
   geom_hline(
     yintercept = 0,
-    linetype = "dashed"
+    linetype = "dashed",
+    colour = "grey50",
+    linewidth = 0.4
   ) +
   facet_wrap(
-    ~ fleet_segment,
+    ~ fleet_segment, 
     scales = "free_y",
-    labeller = labeller(
-      fleet_segment = as_labeller(
-        fleet_segment_labels,
-        default = label_wrap_gen(width = 20)
-      )
-    )
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
   ) +
   labs(
     x = "Year",
     y = "£ per kW day at sea",
     colour = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
 #table for the latest year
 kw_day_summary <- kw_day_data |>
@@ -661,4 +779,206 @@ kw_day_summary <- kw_day_data |>
   pivot_wider(
     names_from = indicator,
     values_from = value
+  )
+# Fishing activity ----
+
+activity_data <- all_fleet_data |>
+  filter(indicator %in% activity_indicators)
+
+#total landings
+total_landings_plot <- activity_data |>
+  filter(indicator == "Landings (tonnes)") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  ))+
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
+  labs(
+    x = "Year",
+    y = "Landings (tonnes)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
+  )
+
+total_days_plot <- activity_data |>
+  filter(indicator == "Days at Sea (days)") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  )) +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
+  labs(
+    x = "Year",
+    y = "Total days at sea"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
+  )
+
+#average days
+average_days_plot <- activity_data |>
+  filter(indicator == "Average Days at Sea") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  ))+
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  )+
+  labs(
+    x = "Year",
+    y = "Average days at sea per vessel"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
+  )
+
+# Fleet structure----
+
+structure_data <- all_fleet_data |>
+  filter(indicator %in% structure_indicators)
+
+vessel_number_plot <- structure_data |>
+filter(indicator == "Number of vessels") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  )) +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  ) +
+  labs(
+    x = "Year",
+    y = "Number of vessels"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
+  )
+
+# employment
+fte_plot <- structure_data |>
+  filter(indicator == "FTEs") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  )) +
+  geom_line(
+    linewidth = 0.7,
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    ~ fleet_segment, 
+    scales = "free_y",
+    ncol = 4,
+    labeller = labeller(fleet_segment = as_labeller(fleet_segment_labels, default = label_wrap_gen(width = 18)))
+  )+
+  labs(
+    x = "Year",
+    y = "Employment (FTE)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 9,
+      face = "bold"
+    ),
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    panel.spacing = grid::unit(1, "lines")
   )
