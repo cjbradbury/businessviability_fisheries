@@ -168,3 +168,19 @@ However, this overall cost structure masks considerable difference between fleet
 Figure 5 shows that cost structures are not fixed over time. The relative importance of fuel, crew, other fishing and vessel costs has changed within a number of fleet segments. This means that different segments may be exposed to different forms of cost pressure, and that exposure can itself change over time.
 
 Differences in cost composition may also be relevant when considering potential displacement pressures. For example, fleet segments for which fuel represents a larger proportion of costs could be more exposed to changes that increase steaming requirements. However, the cost data describe existing cost structures and do not in themselves demonstrate the effect of future spatial displacement.
+
+# Drivers of profitability
+
+Profitability depends not only on the absolute level of income and costs but also on the returns generated relative to fishing activity and vessel capacity. Measures expressed per kW day at sea provide an additional perspective on the efficiency with which different fleet segments convert vessel capacity and fishing activity into income and operating surplus.
+
+```{r kw-day-figure, fig.cap="Figure 6: Fishing income, total costs and operating profit per kW-day by fleet segment over time}
+kw_day_plot
+```
+
+Fishing income per kW day at sea generally exceeds total costs per kW day across the commercially active fleet, although the size and stability of the resulting operating surplus varies substantially between fleet segments. For the overall fleet in 2025, fishing income was approximately £17.70 per kW day compared with total costs of £12.60, resulting in operating profit of £5.70 per kW day.
+
+The results also demonstrate that high absolute profit per vessel does not necessarily correspond to the highest returns relative to vessel capacity and activity. Some smaller-vessel segments generate comparatively strong operating profits per kW day despite substantially lower absolute operating profits per vessel. Conversely, some larger fleet segments generate substantial absolute profits but more modest operating returns when measured relative to capacity and fishing activity.
+
+The underlying drivers of these returns also differ between fleet segments. Analysis of landings per day at sea shows considerable variation in physical catch productivity, while real prices per tonne vary substantially across fisheries. Differences in income generation therefore reflect a combination of the volume of catch generated from fishing activity and the value obtained for that catch.
+
+These measures should not be interpreted as direct ranking of business viability across fleet segments. A kW day is not necessarily economically equivalent across different vessel sizes, gears and fisheries. The measures are therefore most informative when considered alongside absolute profitability and when assessing changes within fleet segments over time.

@@ -80,7 +80,6 @@ structure_indicators <- c(
 activity_indicators <- c(
   "Landings (tonnes)",
   "Days at Sea (days)",
-  "Average Landings (tonnes)",
   "Average Days at Sea",
   "Average landings per day at sea (tonnes)",
   "Landings per kW day at sea (kg)"
@@ -510,3 +509,156 @@ cost_composition_summary <- cost_share_data |>
     vessel_share
   ) |>
   arrange(desc(fleet_segment == "Overall"))
+
+# Drivers of profitability ----
+#Filter drivers data
+drivers_data <- all_fleet_data |>
+  filter(indicator %in% drivers_indicators)
+#check
+drivers_data |>
+  distinct(indicator)
+
+#landings per dat at sea
+landings_per_day_plot <- drivers_data |>
+  filter(indicator == "Average landings per day at sea (tonnes)") |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  )) +
+  geom_line() +
+  facet_wrap(
+    ~ fleet_segment,
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    )
+  ) +
+  labs(
+    x = "Year",
+    y = "Average landings per day at sea (tonnes)"
+  )
+
+#real price received
+price_plot <- drivers_data |>
+  filter(
+    indicator == "Average price per tonne landed (£)"
+  ) |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value
+  )) +
+  geom_line() +
+  facet_wrap(
+    ~ fleet_segment,
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    )
+  ) +
+  labs(
+    x = "Year",
+    y = "Average price per tonne landed (£)"
+  )
+
+# Notes:
+# - Catch productivity, measured by average landings per day at sea,
+#   differs substantially across fleet segments and has generally
+#   increased at the overall fleet level.
+#
+# - Trends are not uniform across segments; some show sustained increases
+#   in landings per day while others are relatively stable or volatile.
+#
+# - Real prices per tonne also differ substantially across fleet segments,
+#   reflecting differences in the species caught and fishing activity.
+#
+# - High tonnes landed per day should not therefore be interpreted
+#   automatically as stronger economic performance. Lower-volume segments
+#   can receive substantially higher prices per tonne.
+#
+# - Physical productivity and output value should therefore be considered
+#   together when assessing income-generating capacity.
+
+kw_day_data <- drivers_data |>
+  filter(
+    indicator %in% c(
+      "Fishing income per kW day at sea (£)",
+      "Total cost per kW day at sea (£)",
+      "Operating profit per kW day at sea (£)"
+    )
+  )
+
+#plot of kw_day_data
+kw_day_plot <- kw_day_data |>
+  mutate(
+    fleet_segment = fct_relevel(
+      fleet_segment,
+      "Overall",
+      after = 0
+    )
+  ) |>
+  ggplot(aes(
+    x = year,
+    y = value,
+    colour = indicator
+    )
+  ) +
+  geom_line() +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed"
+  ) +
+  facet_wrap(
+    ~ fleet_segment,
+    scales = "free_y",
+    labeller = labeller(
+      fleet_segment = as_labeller(
+        fleet_segment_labels,
+        default = label_wrap_gen(width = 20)
+      )
+    )
+  ) +
+  labs(
+    x = "Year",
+    y = "£ per kW day at sea",
+    colour = NULL
+  )
+#table for the latest year
+kw_day_summary <- kw_day_data |>
+  filter(!is.na(value)) |>
+  group_by(fleet_segment, indicator) |>
+  slice_max(
+    year,
+    n = 1,
+    with_ties = FALSE
+  ) |>
+  ungroup() |>
+  select(
+    fleet_segment,
+    year,
+    indicator,
+    value
+  ) |>
+  pivot_wider(
+    names_from = indicator,
+    values_from = value
+  )
